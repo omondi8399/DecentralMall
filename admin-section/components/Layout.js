@@ -1,7 +1,7 @@
 import NavBar from "@/components/NavBar"
 import { useSession, signIn, signOut } from "next-auth/react"
 
-export default function Layout() {
+export default function Layout({children}) {
     const { data: session } = useSession()
     if (!session) {
         return (
@@ -16,7 +16,7 @@ export default function Layout() {
     return (
         <div className="bg-blue-900 min-h-screen">
         <NavBar />
-        <div className="bg-white flex-grow mt-2 mr-2 mb-2 rounded-lg p-4">Logged in {session.user.email}</div>
+        <div className="bg-white flex-grow mt-2 mr-2 mb-2 rounded-lg p-4">{children}</div>
         </div>
     )
 }
