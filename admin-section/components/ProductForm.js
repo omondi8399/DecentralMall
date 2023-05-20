@@ -8,11 +8,12 @@ export default function ProductForm ({
     title:existingTitle,
     description:existingDescription,
     price:existingPrice,
-    images,
+    images:existingImages,
 }) {
     const [title, setTitle] = useState(existingTitle || '')
     const [description, setDescription] = useState(existingDescription || '')
     const [price, setPrice] = useState(existingPrice || '')
+    const [images, setImages] = useState(existingImages || [])
     const [goToProducts, setGoToProducts] = useState(false)
     const router = useRouter()
     async function saveProduct(e) {
@@ -38,11 +39,10 @@ export default function ProductForm ({
                 data.append('file', file)
             }
             
-            const res = await fetch('/api/upload', {
-                method: 'POST',
-                body: data,
+            const res = await axios.post('/api/upload', data)
+            setImages(oldImages => {
+                return [...oldImages, ...res.data.links]
             })
-            console.log(res)
         }
     }
     return (
@@ -51,6 +51,11 @@ export default function ProductForm ({
             <input type="text" placeholder="product name" value={title} onChange={e => setTitle(e.target.value)} />
             <label>Photos</label>
             <div className="mb-2">
+                {!!images?.length && images.map(link => (
+                    <div key={link} className="h-24">
+                        <img src={link} alt="" />
+                    </div>
+                ))}
                 <label className="w-24 h-24 cursor-pointer text-center flex items-center justify-center text-sm gap-1
                 text-gray-500 rounded-lg bg-gray-200">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
