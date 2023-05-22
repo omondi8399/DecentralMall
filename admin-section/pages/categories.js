@@ -35,6 +35,23 @@ function Categories({swal}) {
             setName(category.name)
             setParentCategory(category.parent?._id)
         }
+        function deleteCategory(category){
+            swal.fire({
+            title: 'Are you sure?',
+            text: `Do you want to delete ${category.name}?`,
+            showCancelButton: true,
+            cancelButtonText: 'Cancel',
+            confirmButtonText: 'Yes, Delete!',
+            confirmButtonColor: '#d55',
+            reverseButtons: true,
+            }).then(async result => {
+            if (result.isConfirmed) {
+                const {_id} = category;
+                await axios.delete('/api/categories?_id='+_id);
+                fetchCategories();
+            }
+            });
+        }
         return (
             <Layout>
                 <h1>Categories</h1>
