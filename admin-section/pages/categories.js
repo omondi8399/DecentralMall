@@ -8,6 +8,7 @@ function Categories({swal}) {
         const [name, setName] = useState('')
         const [parentCategory, setParentCategory] = useState('')
         const [categories, setCategories] = useState([])
+        const [properties, setProperties] = useState([])
         useEffect(() => {
             fetchCategories()
         }, [])
@@ -52,23 +53,73 @@ function Categories({swal}) {
             }
             });
         }
+        function addProperty() {
+            setProperties(prev => {
+                return [...prev, {name:'',values:''}]
+            })
+        }
+        function handlePropertyNameChange(index,property,newName) {
+            setProperties(prev => {
+                const properties = [...prev]
+                properties[index].name = newName
+                return properties
+            })
+        }
+        function handlePropertyValuesChange(index,property,newValues) {
+            setProperties(prev => {
+                const properties = [...prev]
+                properties[index].values = newValues
+                return properties
+            })
+        }
+        function removeProperty(indexToRemove) {
+            setProperties(prev => {
+                return [...prev].filter((p,pIndex) => {
+                    return pIndex !== indexToRemove
+                })
+            })
+        }
         return (
             <Layout>
                 <h1>Categories</h1>
                 <label>{editedCategory ? `Edit category ${editedCategory.name}` : 'Create new category'}</label>
-                <form onSubmit={saveCategory} className="flex gap-1">
-                <input className="mb-0" type="text" placeholder={'Category name'} 
+                <form onSubmit={saveCategory}>
+                <div className="flex gap-1">
+                <input type="text" placeholder={'Category name'} 
                 onChange={e => setName(e.target.value)}  value={name}/>
-                <select className="mb-0 " onChange={e => setParentCategory(e.target.value)}
+                <select onChange={e => setParentCategory(e.target.value)}
                 value={parentCategory}>
                     <option value="0">No parent category</option>
                     {Categories.length > 0 && categories.map(category => (
                         <option key={category} value={category._id}>{category.name}</option>
                     ))}
                 </select>
-                <button type="submit" className="btn-primary py-1">Save</button>
+                </div>
+                <div className="mb-2">
+                    <label className="block">Properties</label>
+                    <button type="button" className="btn-default text-sm mb-2">Add new Property</button>
+                    {properties.length > 0 && properties.map((property,index) => (
+                        <div key={property} className="flex gap-1 mb-2">
+                            <input type="text" value={property.name} className="mb-0"
+                            onChange={e => handlePropertyNameChange(index,property,e.target.value )} 
+                            placeholder="property name (example: color)" />
+                            <input type="text" value={property.values} className="mb-0" 
+                            onChange={e => handlePropertyValuesChange(index,property,e.target.value )} 
+                            placeholder="values, comma separated" />
+                            <button onClick={() => removeProperty(index)} type="button" className="btn-default">Remove</button>
+                        </div>
+                    ))}
+                </div>
+                <div className="flex gap-1">
+                    {editCategory && (
+                                <button className="btn-default">Cancel</button>
+                            )}
+                                <button onClick={addProperty}
+                type="submit" className="btn-primary py-1">Save</button>
+                    </div>
                 </form>
-                <table className="basic mt-4">
+                {!editedCategory && (
+                    <table className="basic mt-4">
                     <thead>
                         <tr>
                             <td>Category name</td>
@@ -90,6 +141,8 @@ function Categories({swal}) {
                             ))}
                     </tbody>
                 </table>
+                )}
+                
             </Layout>
         )
     }
