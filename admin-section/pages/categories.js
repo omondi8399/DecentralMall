@@ -20,7 +20,14 @@ function Categories({swal}) {
         }
         async function saveCategory(e){
             e.preventDefault()
-            const data = {name,parentCategory}
+            const data = {
+                name,
+                parentCategory,
+                properties:properties.map(p => ({
+                    name:p.name,
+                    values:p.values.split(','),
+                }))
+            }
             if (editedCategory) {
                 data._id = editedCategory._id
                 await axios.put('/api/categories', data)
@@ -29,12 +36,19 @@ function Categories({swal}) {
                 await axios.post('/api/categories', data)
             }
             setName('')
+            setParentCategory('')
+            setProperties([])
             fetchCategories()
         }
         function editCategory(category){
             setEditedCategory(category)
             setName(category.name)
             setParentCategory(category.parent?._id)
+            setProperties(
+                category.properties.map(({name,values}) => ({
+                    name,
+                    values:values.join(',')
+                })))
         }
         function deleteCategory(category){
             swal.fire({
@@ -111,8 +125,14 @@ function Categories({swal}) {
                     ))}
                 </div>
                 <div className="flex gap-1">
-                    {editCategory && (
-                                <button className="btn-default">Cancel</button>
+                    {editedCategory && (
+                                <button type="button" onClick={() => {setEditedCategory(null)
+                                    setEditedCategory(null)
+                                    setName('')
+                                    setParentCategory('')
+                                    setProperties([])
+                                }}
+                                className="btn-default">Cancel</button>
                             )}
                                 <button onClick={addProperty}
                 type="submit" className="btn-primary py-1">Save</button>
