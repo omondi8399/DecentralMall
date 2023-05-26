@@ -61,6 +61,17 @@ export default function ProductForm ({
     function uploadImagesOrder(images) {
         console.log(images)
     }
+
+    const propertiesToFill = []
+    if (category.length > 0 && category) {
+        let catInfo = categories.find(({_id}) => _id === category)
+        propertiesToFill.push(...catInfo.properties)
+        while(catInfo?.parent?._id) {
+            const parentCat = categories.find(({_id}) => _id === selCatInfo?.parent?._id)
+            propertiesToFill.push(...parentCat.properties)
+            catInfo = parentCat
+        }
+    }
     return (
             <form onSubmit={saveProduct}>
             <label>Product name</label>
@@ -72,6 +83,9 @@ export default function ProductForm ({
                     <option key={c} value={c.id}>{c.name}</option>
                 ))}
             </select>
+            {propertiesToFill.length > 0 && propertiesToFill.map(p => (
+                <div key={p}>{p.name}</div>
+            ))}
             <label>Photos</label>
             <div className="mb-2 flex flex-wrap gap-1">
                 <ReactSortable list={images} className="flex flex-wrap gap-1" setList={uploadImagesOrder}>
