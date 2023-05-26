@@ -1,7 +1,10 @@
 import clientPromise from '@/lib/mongodb'
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter'
 import NextAuth from 'next-auth'
-    import GoogleProvider from 'next-auth/providers/google'
+import GoogleProvider from 'next-auth/providers/google'
+
+const adminEmails = ['rodgers.omosh@gmail.com']
+
 
     export default NextAuth({
     providers: [
@@ -11,5 +14,11 @@ import NextAuth from 'next-auth'
         clientSecret: process.env.GOOGLE_SECRET
         }),    
     ],
-    adapter: MongoDBAdapter(clientPromise)
+    adapter: MongoDBAdapter(clientPromise),
+    callbacks: {
+        session: ({session,token,user}) => {
+
+            return session
+        },
+    },
     })
