@@ -12,10 +12,12 @@ export default function ProductForm ({
     price:existingPrice,
     images:existingImages,
     category:assignedCategory,
+    properties:assignedProperties,
 }) {
     const [title, setTitle] = useState(existingTitle || '')
     const [description, setDescription] = useState(existingDescription || '')
     const [category, setCategory] = useState(assignedCategory || '')
+    const [productProperties, setProductProperties] = useState(assignedProperties || {})
     const [price, setPrice] = useState(existingPrice || '')
     const [images, setImages] = useState(existingImages || [])
     const [goToProducts, setGoToProducts] = useState(false)
@@ -29,7 +31,7 @@ export default function ProductForm ({
     }, [])
     async function saveProduct(e) {
         e.preventDefault()
-        const data = {title,description,price,images, category}
+        const data = {title,description,price,images, category, properties: productProperties}
         if (_id) {
             //update 
             await axios.put('/api/products', {...data,_id})
@@ -62,6 +64,14 @@ export default function ProductForm ({
         console.log(images)
     }
 
+    function setProductProp(propName,value) {
+        setProductProperties(prev => {
+            const newProductProps = {...prev}
+            newProductProps[propName] = value
+            return newProductProps
+        })
+    }
+
     const propertiesToFill = []
     if (category.length > 0 && category) {
         let catInfo = categories.find(({_id}) => _id === category)
@@ -84,7 +94,15 @@ export default function ProductForm ({
                 ))}
             </select>
             {propertiesToFill.length > 0 && propertiesToFill.map(p => (
-                <div key={p}>{p.name}</div>
+                <div className="flex gap-1" key={p}>
+                    <div>{p.name}</div>
+                    <select value={productProperties[p.name]} 
+                    onChange={(e) => setProductProp(p.name), e.target.value}>
+                    {p.value.map(v => (
+                        <option key={v} value={v}>{v}</option>
+                    ))}
+                    </select>
+                </div>
             ))}
             <label>Photos</label>
             <div className="mb-2 flex flex-wrap gap-1">
