@@ -28,7 +28,7 @@ export default function Header() {
         <StyledHeader>
             <Center>
             <Wrapper>
-            <Logo href={'/'}>Ecommerce</Logo>
+            <Logo href={'/'}>DecentralMall</Logo>
             <StyledNav>
                 <NavLink href={'/'}>Home</NavLink>
                 <NavLink href={'/products'}>All Products</NavLink>
