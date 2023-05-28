@@ -2,6 +2,7 @@ import Button from "@/components/Button";
 import { CartContext } from "@/components/CartContext";
 import Center from "@/components/Center";
 import Header from "@/components/Header";
+import Table from "@/components/Table";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 
@@ -16,6 +17,24 @@ const Box = styled.div`
     background-color: #fff;
     border-radius: 10px;
     padding: 30px;
+`
+
+const ProductInfoCell = styled.td`
+    padding: 10px 0;
+`
+const ProductImageBox = styled.div`
+    width: 100px;
+    height: 100px;
+    padding: 10px;
+    box-shadow: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    img{
+        max-width: 80px;
+        max-height: 80px;
+    }
 `
 
 export default function CartPage() {
@@ -36,19 +55,33 @@ export default function CartPage() {
             <Center>
                 <ColumnWrapper>
                     <Box>
+                    <h2>Cart</h2>
                         {!cartProducts?.length && (
                             <div>Your cart is empty</div>
                         )}
-                        
                         {products?.length > 0 && (
-                            <>
-                                <h2>Cart</h2>
+                        <Table>
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                                 {products.map(product => (
-                                    <div key={product}>
-                                        {product.title}: {cartProducts.filter(id => id === product._id).length} 
-                                    </div>
-                                ))}
-                            </>
+                                            <tr key={product}>
+                                            <ProductInfoCell>
+                                                <ProductImageBox>
+                                                <img src={product.images[0]} alt="" />
+                                                </ProductImageBox>
+                                                {product.title}
+                                            </ProductInfoCell>    : 
+                                            <td>{cartProducts.filter(id => id === product._id).length}</td>
+                                            </tr>
+                                        ))}
+                            </tbody>
+                        </Table>
                         )}
                     </Box>
                     {!!cartProducts?.length && (
