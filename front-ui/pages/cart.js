@@ -71,10 +71,35 @@ export default function CartPage() {
     function lessOfThisProduct(id) {
         removeProduct(id)
     }
+    async function goToPayment() {
+        const response = await axios.post('/api/checkout', {
+            name,email,city,postalCode,streetAddress,country,
+            cartProducts,
+        })
+        if (response.data.url) {
+            window.location = response.data.url
+        }
+    }
     let total = 0;
     for (const productId of cartProducts) {
         const price = products.find(p => p.id === productId)?.price || 0;
         total += price
+    }
+
+    if (window.location.href.includes('success')) {
+        return (
+            <>
+            <Header />
+            <Center>
+                <ColumnWrapper>
+                <Box>
+                    <h1>Thanks for your order!</h1>
+                    <p>We will email you when your order will be sent.</p>
+                </Box>
+                </ColumnWrapper>
+            </Center>
+            </>
+        )
     }
     return (
         <>
@@ -128,8 +153,7 @@ export default function CartPage() {
                     {!!cartProducts?.length && (
                         <Box>
                         <h2>Order Information</h2>
-                        <form method="post" action="/api/checkout">
-                            <Input type="text" placeholder="Name" value={name} name="name"
+                        <Input type="text" placeholder="Name" value={name} name="name"
                             onChange={e => setName(e.target.value)} />
                             <Input type="text" placeholder="Email" value={email} name="email" 
                             onChange={e => setEmail(e.target.value)} />
@@ -143,9 +167,7 @@ export default function CartPage() {
                             onChange={e => setStreetAddress(e.target.value)}/>
                             <Input type="text" placeholder="Country" value={country} name="country" 
                             onChange={e => setCountry(e.target.value)} />
-                        <input type="hidden" name="products" value={cartProducts.join(',')} />
-                        <Button black block type="submit">Continue to payment</Button>
-                        </form>
+                        <Button black block onClick={goToPayment}>Continue to payment</Button>
                     </Box>
                     )}
                 </ColumnWrapper>
